@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>CrazyCard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="../../static/css/generic.css">
+    <link rel="icon" type="image/ico" th:href="@{../static/favicon.ico}">
+</head>
+<body>
+<div th:replace="~{fragments/navbar.html:: navbarAnonymous}" sec:authorize="isAnonymous()"></div>
+<div th:replace="~{fragments/navbar.html:: navbarAuthenticated}" sec:authorize="isAuthenticated()"></div>
+<div class="container">
+    <div class="row col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Genera Carta</h2>
+            </div>
+            <div th:if="${param.success}">
+                <div class="alert alert-info">
+                    Sono state create ( <span th:text="${param.success}"></span> ) nuove carte!
+                </div>
+            </div>
+            <div class="card-body">
+                <form
+                        method="post"
+                        role="form"
+                        id="new-card-form"
+                        th:action="@{/admin/new-card/save}"
+                >
+                    <div class="form-group mb-3">
+                        <label class="form-label">Importo</label>
+                        <select class="form-select"
+                                form="new-card-form"
+                                name="amount">
+                            <option selected value="100.00">
+                                100
+                            </option>
+                            <option value="200.00">
+                                200
+                            </option>
+                            <option value="300.00">
+                                300
+                            </option>
+                            <option value="500.00">
+                                500
+                            </option>
+                            <option value="1000.00">
+                                1000
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label">Quantità</label>
+                        <select class="form-select"
+                                form="new-card-form"
+                                name="quantity">
+                            <option selected value="1">
+                                1
+                            </option>
+                            <option value="5">
+                                5
+                            </option>
+                            <option value="10">
+                                10
+                            </option>
+                            <option value="25">
+                                25
+                            </option>
+                            <option value="50">
+                                50
+                            </option>
+                            <option value="100">
+                                100
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">Genera</button>
+                        <span>Vuoi gestire carte già esistenti? <a th:href="@{/admin/card}">Gestisci Carte</a></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>CrazyCard</title>
+  <link href="../../static/css/generic.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+          crossorigin="anonymous">
+  </script>
+  <link rel="stylesheet" href="../../static/css/generic.css">
+  <link rel="icon" type="image/ico" th:href="@{../static/favicon.ico}">
+</head>
+<body>
+<nav th:replace="~{fragments/navbar.html:: navbarAnonymous}" sec:authorize="isAnonymous()"></nav>
+<nav th:replace="~{fragments/navbar.html:: navbarAuthenticated}" sec:authorize="isAuthenticated()"></nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="text-center">Login</h2>
+        </div>
+        <div class="card-body">
+          <form
+                  method="post"
+                  role="form"
+                  th:action="@{/merchant/assign-card/login}"
+                  class="form-horizontal"
+                  id="assign-card-form"
+          >
+            <div class="form-group mb-3">
+              <label class="control-label"> Email</label>
+              <input
+                      type="text"
+                      id="email"
+                      name="email"
+                      class="form-control"
+                      placeholder="Inserisci Email"
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="control-label"> Password</label>
+              <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      class="form-control"
+                      placeholder="Inserisci Password"
+              />
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label">Importo</label>
+              <select class="form-select"
+                      form="assign-card-form"
+                      name="amount">
+                <option selected value="100.00">
+                  100
+                </option>
+                <option value="200.00">
+                  200
+                </option>
+                <option value="300.00">
+                  300
+                </option>
+                <option value="500.00">
+                  500
+                </option>
+                <option value="1000.00">
+                  1000
+                </option>
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <button type="submit" class="btn btn-primary" >Login</button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer">
+          <div th:if="${param.error}">
+            <div class="alert alert-danger">Credenziali errate</div>
+          </div>
+          <div th:if="${param.nocard}">
+            <div class="alert alert-dark">Importo selezionato non disponibile</div>
+          </div>
+          <div th:if="${param.success}">
+            <div class="alert alert-success">Carta Registrata Correttamente!</div>
+          </div>
+          <div th:if="${param.nocustomer}">
+            <div class="alert alert-danger">L'Utente non risulta registrato come Cliente</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+      <div class="card-header">
+        <h2 class="text-center">Registrazione</h2>
+      </div>
+      <div class="card-body">
+        <form
+                method="post"
+                role="form"
+                id="regassign-card-form"
+                th:action="@{/merchant/assign-card/register}"
+                th:object="${user}"
+        >
+          <div class="form-group mb-3">
+            <label class="form-label">First Name</label>
+            <input
+                    class="form-control"
+                    id="firstName"
+                    name="firstName"
+                    placeholder="Enter first name"
+                    th:field="*{firstName}"
+                    type="text"
+            />
+            <p th:errors = "*{firstName}" class="text-danger"
+               th:if="${#fields.hasErrors('firstName')}"></p>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label">Last Name</label>
+            <input
+                    class="form-control"
+                    id="lastName"
+                    name="lastName"
+                    placeholder="Enter last name"
+                    th:field="*{lastName}"
+                    type="text"
+            />
+            <p th:errors = "*{lastName}" class="text-danger"
+               th:if="${#fields.hasErrors('lastName')}"></p>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label">Email</label>
+            <input
+                    class="form-control"
+                    id="regemail"
+                    name="email"
+                    placeholder="Enter email address"
+                    th:field="*{email}"
+                    type="email"
+            />
+            <p th:errors = "*{email}" class="text-danger"
+               th:if="${#fields.hasErrors('email')}"></p>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label">Password</label>
+            <input
+                    class="form-control"
+                    id="regpassword"
+                    name="password"
+                    placeholder="Enter password"
+                    th:field="*{password}"
+                    type="password"
+            />
+            <p th:errors = "*{password}" class="text-danger"
+               th:if="${#fields.hasErrors('password')}"></p>
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-label">Importo</label>
+            <select class="form-select"
+                    form="regassign-card-form"
+                    name="regamount">
+              <option selected value="100.00">
+                100
+              </option>
+              <option value="200.00">
+                200
+              </option>
+              <option value="300.00">
+                300
+              </option>
+              <option value="500.00">
+                500
+              </option>
+              <option value="1000.00">
+                1000
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary" type="submit">Registra Utente</button>
+          </div>
+        </form>
+      </div>
+        <div class="card-footer">
+          <div th:if="${param.regsuccess}">
+            <div class="alert alert-info">
+              Registrazione effettuata con successo!
+            </div>
+          </div>
+          <div th:if="${param.regnocard}">
+            <div class="alert alert-dark">Importo selezionato non disponibile</div>
+          </div>
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+
+
+</body>
+</html>

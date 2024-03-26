@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>CrazyCard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+          crossorigin="anonymous">
+  </script>
+  <link rel="stylesheet" href="../../static/css/generic.css">
+  <link rel="icon" type="image/ico" th:href="@{../static/favicon.ico}">
+</head>
+<body>
+<div th:replace="~{fragments/navbar.html:: navbarAnonymous}" sec:authorize="isAnonymous()"></div>
+<div th:replace="~{fragments/navbar.html:: navbarAuthenticated}" sec:authorize="isAuthenticated()"></div>
+<div class="container">
+  <div class="alert alert-success" th:if="${param.deleted}">
+    Utente Eliminato
+  </div>
+  <div class="alert alert-dark" th:if="${param.noupdatemade}">
+    Nessuna modifica è stata effettuata
+  </div>
+  <div class="alert alert-success" th:if="${param.customerdisabled}">
+    Carte Disabilitate
+  </div>
+  <div class="alert alert-success" th:if="${param.unabledelete}">
+    Impossibile Eliminare Amministratore dal Sistema
+  </div>
+  <div class="alert alert-success" th:if="${param.storeupdated}">
+    Nuovo negozio impostato
+  </div>
+  <div class="alert alert-danger" th:if="${param.nostoreexists}">
+    Il Negozio che hai impostato non è presente nel nostro Sistema
+  </div>
+  <div class="row col-md-10">
+    <h2>Utenti Registrati</h2>
+  </div>
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Email</th>
+      <th>Ruolo</th>
+      <th>Azione</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each = "user : ${users}">
+      <td th:text = "${user.firstName}"></td>
+      <td th:text = "${user.lastName}"></td>
+      <td th:text = "${user.email}"></td>
+      <td>
+        <select  name="roleSelect" style="width: 200px"
+                 class="form-select">
+          <option disabled="true" selected th:each="role : ${user.roles}"
+                  th:text="${role.name}" th:value="${role.name}">
+          </option>
+        </select>
+      </td>
+      <td>
+        <form
+                role="form"
+                class="form-horizontal center"
+                method="post"
+                th:action="@{/admin/users/management}">
+          <input type="text" th:value="${user.email}"
+                 name="email" id="email" style="display: none">
+          <div class="form-group center">
+            <button type="submit" class="btn btn-primary">
+              Gestisci
+            </button>
+          </div>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

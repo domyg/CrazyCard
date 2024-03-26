@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>CrazyCard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+          crossorigin="anonymous">
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="../../static/css/generic.css">
+  <script type="text/javascript" src="../../static/js/customer-analysis.js"></script>
+  <script src="../../static/js/generic.js"></script>
+  <link rel="icon" type="image/ico" th:href="@{../static/favicon.ico}">
+</head>
+<body>
+<div th:replace="~{fragments/navbar.html:: navbarAnonymous}" sec:authorize="isAnonymous()"></div>
+<div th:replace="~{fragments/navbar.html:: navbarAuthenticated}" sec:authorize="isAuthenticated()"></div>
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <div class="form-group mb-3">
+        <label class="form-label">Carta</label>
+        <select class="form-select"
+                name="cardSelect"
+                id="card-select"
+                onchange="changeCardNumber()">
+          <option selected value="null">
+            -
+          </option>
+          <option
+                  th:each="card : ${cards}"
+                  th:value="${card.number}"
+                  th:text="${card.number}">
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card card-header">
+          Cerca per Data
+        </div>
+        <div class="card card-body">
+          <form
+                  method="post"
+                  role="form"
+                  th:action="@{/customer/analysis/on-date}"
+                  class="form-horizontal"
+                  id="onDate">
+            <label for="dateInput">Data</label>
+            <input type="date" id="dateInput" name="dateString"
+                   required="required">
+            <input type="text" style="display: none"
+                   name="customerName" id="customerName" th:value="${#authentication.name}">
+            <input type="text" style="display: none" value="null"
+                   name="cardNumber" id="card-number-on-date">
+            <button class="btn btn-primary" type="submit">
+              Visualizza
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card card-header">
+          Cerca per arco Temporale
+        </div>
+        <div class="card card-body">
+          <form
+                  method="post"
+                  role="form"
+                  th:action="@{/customer/analysis/on-range}"
+                  class="form-horizontal"
+                  id="onRange">
+            <label for="dateInput">Data Inizio</label>
+            <input type="date" id="dateStart" name="dateStartString"
+                   required="required">
+            <br />
+            <label for="dateInput">Data Fine</label>
+            <input type="date" id="dateEnd" name="dateEndString"
+                   required="required">
+            <input type="text" style="display: none"
+                   name="customerName" id="rangeUser" th:value="${#authentication.name}">
+            <input type="text" style="display: none" value="null"
+                   name="cardNumber" id="card-number-on-range">
+            <button class="btn btn-primary" type="submit">
+              Visualizza
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card card-header">
+          Cerca tutte le Transazioni
+        </div>
+        <div class="card card-body">
+          <form
+                  method="post"
+                  role="form"
+                  th:action="@{/customer/analysis/all}"
+                  class="form-horizontal"
+                  id="all">
+            <input type="text" style="display: none"
+                   name="customerName" id="allUser" th:value="${#authentication.name}">
+            <input type="text" style="display: none" value="null"
+                   name="cardNumber" id="card-number-all">
+            <button class="btn btn-primary" type="submit">
+              Visualizza
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col center overflow-auto">
+      <div class="alert alert-danger" th:if="${param.notowner}">
+        La carta selezionata non risulta associata al tuo Account!
+      </div>
+      <div class="alert alert-danger" th:if="${param.nocardexists}">
+        Nessuna carta è registrata per questo Account
+      </div>
+      <div class="alert alert-dark" th:if="${param.noselection}">
+        Seleziona una Carta!
+      </div>
+      <table class="table table-bordered table-hover"
+             id="resultTable">
+        <thead class="table-dark">
+        <tr>
+          <th class="clickable-th" onclick="reverseCol(0,'resultTable')">Data</th>
+          <th class="clickable-th" onclick="sortTable(1, 'resultTable')">Importo</th>
+          <th style="display: none">Carta</th>
+          <th>Negozio</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each = "transaction : ${transactions}">
+          <td th:text = "${transaction.date}"></td>
+          <td th:text = "${transaction.amount}"></td>
+          <td style="display: none" th:text="${transaction.cardNumber}"></td>
+          <td th:text = "${transaction.storeName}"></td>
+        </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-primary" onclick="sendData()"
+              id="downloadButton">
+        Download
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<nav th:fragment="navbarAnonymous" xmlns:sec="http://www.w3.org/1999/xhtml"
+        class="navbar-brand navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" th:href="@{/index}">CrazyCard</a>
+        <div class="collapse navbar-collapse" id="navbarAnonymous">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item" >
+                    <a class="nav-link active" aria-current="page" th:href="@{/register/customer}">
+                        Registrati
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/login}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<nav th:fragment="navbarAuthenticated" xmlns:sec="http://www.w3.org/1999/xhtml"
+        class="navbar-brand navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" th:href="@{/index}">CrazyCard</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page"
+                       sec:authorize="hasRole('ADMIN')" th:href="@{/register/admin}">
+                        Registra Utenti
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <div class="dropdown">
+                        <a class="nav-link active dropdown-toggle"
+                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                           sec:authorize="hasRole('ADMIN')">
+                            Gestione Admin
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item"
+                                   sec:authorize="hasRole('ADMIN')" th:href="@{/admin/users}">
+                                    Gestione Utenti
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   sec:authorize="hasRole('ADMIN')" th:href="@{/admin/card}">
+                                    Gestione Carte
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   sec:authorize="hasRole('ADMIN')" th:href="@{/admin/stores}">
+                                    Gestione Negozi
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page"
+                       sec:authorize="hasRole('ADMIN')" th:href="@{/admin/analysis}">
+                        Analisi Aziendale
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <div class="dropdown">
+                        <a class="nav-link active dropdown-toggle"
+                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                        sec:authorize="hasRole('MERCHANT')">
+                            Negozio
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item"
+                                   th:href="@{/merchant/card}">Operazioni Carta</a>
+                            </li>
+                            <li><a class="dropdown-item"
+                                   th:href="@{/merchant/analysis}">Analitica Negozio</a>
+                            </li>
+                            <li><a class="dropdown-item"
+                                   th:href="@{/merchant/assign-card}">Registra Carta</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page"
+                       sec:authorize="hasRole('CUSTOMER')" th:href="@{/customer/analysis}">
+                        Lista Movimenti
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page"
+                       th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

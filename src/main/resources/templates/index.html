@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>CrazyCard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="../static/css/generic.css">
+    <link rel="icon" type="image/ico" th:href="@{../static/favicon.ico}">
+</head>
+<body>
+<div>
+<nav th:replace="~{fragments/navbar.html:: navbarAnonymous}" sec:authorize="isAnonymous()"></nav>
+<nav th:replace="~{fragments/navbar.html:: navbarAuthenticated}" sec:authorize="isAuthenticated()"></nav>
+</div>
+<br /><br />
+<div class="container">
+    <div class="row">
+        <h1 class="text-center"> CrazyCard </h1>
+    </div>
+    <div class="col-md-6 offset-md-3">
+        <div class="card-body">
+            <form
+                    method="get"
+                    role="form"
+                    th:action="@{/check_balance}"
+                    class="form-horizontal"
+            >
+                <div class="form-group mb-3">
+                    <label class="form-label">Verifica Credito</label>
+                    <input
+                            class="form-control"
+                            id="cardNumber"
+                            name="cardNumber"
+                            required
+                            placeholder="Inserisci il numero di carta"
+                            type="number"
+                    />
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">Cerca</button>
+                </div>
+            </form>
+            <!--
+                Il seguento div contiene degli span che vengono utilizzati
+                per mostrare il contenuto della risposta proveniente dal backend.
+                In particolare, cardNumber e balance sono due variabili che sono
+                state aggiunte al model attraverso la classe java CardController.
+            !-->
+            <div class="alert alert-danger" th:if="${invalidNumber}">
+                    <span th:text="${invalidNumber}">
+                    </span>
+            </div>
+            <div class="form-group mb-3" th:if="${cardNumber}">
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card card-body">
+                                    <label for="cardno">Carta</label>
+                                    <input type="text" id="cardno" th:value="${cardNumber}" readonly>
+                                    <label for="card-balance">Credito Residuo</label>
+                                    <input type="text" id="card-balance" th:value="${balance}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<footer></footer>
+</body>
+</html>

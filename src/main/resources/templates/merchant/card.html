@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>CrazyCard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+          crossorigin="anonymous">
+  </script>
+    <link rel="stylesheet" href="../../static/css/generic.css">
+    <link rel="icon" type="image/ico" th:href="@{../static/favicon.ico}">
+</head>
+<body>
+<nav th:replace="~{fragments/navbar.html:: navbarAnonymous}" sec:authorize="isAnonymous()"></nav>
+<nav th:replace="~{fragments/navbar.html:: navbarAuthenticated}" sec:authorize="isAuthenticated()"></nav>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">Pagamento</h2>
+                </div>
+                <div class="card-body">
+                    <form
+                            method="post"
+                            role="form"
+                            th:action="@{/merchant/card/removeCredit}"
+                            class="form-horizontal"
+                            id="removeForm">
+                        <div class="form-group">
+                            <label class="form-label" for="removeNumber">Carta</label>
+                            <input class="form-control" type="number" id="removeNumber" name="removeNumber"
+                        placeholder="Inserisci Numero Carta">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="paymentAmount">Importo Transazione</label>
+                            <input class="form-control" type="number" step="0.01"
+                               id="paymentAmount" name="paymentAmount"
+                        placeholder="Inserisci importo">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="removePin">PIN</label>
+                            <input class="form-control" type="password" id="removePin" name="removePin"
+                               placeholder="Inserire Pin">
+                        </div>
+                        <input type="text" name="removeUsername" id="removeUsername"
+                               th:value="${#authentication.name}" readonly="readonly"
+                                style="display: none"/>
+                        <div class="form-group">
+                        <button class="btn btn-primary"
+                        type="submit">Paga</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <div class="alert alert-danger" th:if="${param.removeerror}">
+                        Credito residuo non sufficiente.
+                    </div>
+                    <div class="alert alert-danger" th:if="${param.removeexists}">
+                        Numero di carta inesistente
+                    </div>
+                    <div class="alert alert-danger" th:if="${param.removedisabled}">
+                        Carta disabilitata
+                    </div>
+                    <div class="alert alert-danger" th:if="${param.removenoowner}">
+                        Carta non associata ad alcun proprietario!
+                    </div>
+                    <div class="alert alert-danger" th:if="${param.removepinerr}">
+                        PIN non valido!
+                    </div>
+                    <div class="alert alert-success" th:if="${param.removesuccess}">
+                        Pagamento effettuato con successo!
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">Accredito</h2>
+                </div>
+                <div class="card-body">
+                    <form
+                            method="post"
+                            role="form"
+                            th:action="@{/merchant/card/addCredit}"
+                            class="form-horizontal"
+                            id="creditForm">
+                        <div class="form-group">
+                            <label class="form-label" for="addNumber">Carta</label>
+                            <input class="form-control" type="number" id="addNumber" name="addNumber"
+                               placeholder="Insercici Numero Carta">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="creditAmount">Importo Transazione</label>
+                            <input class="form-control" type="number" step="0.01"
+                               id="creditAmount" name="creditAmount"
+                               placeholder="Inserisci importo">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="addPin">PIN</label>
+                            <input class="form-control" type="password" id="addPin" name="addPin"
+                               placeholder="Inserire Pin">
+                        </div>
+                        <input type="text" name="addUsername" id="addUsername"
+                               style="display: none"
+                               th:value="${#authentication.name}" readonly="readonly" />
+                        <div class="form-group">
+                        <button class="btn btn-primary"
+                                type="submit">Accredita</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <div class="alert alert-success" th:if="${param.addsuccess}">
+                        Accredito di effettuato con successo!
+                    </div>
+                    <div class="alert alert-danger" th:if="${param.addexists}">
+                        Carta inesistente
+                    </div>
+                    <div class="alert alert-danger" th:if="${param.addpinerr}">
+                        PIN non valido!
+                    </div>
+                    <div class="alert alert-danger" th:if="${param.adddisabled}">
+                        Carta disabilitata
+                    </div>
+                    <div class="alert alert-danger" th:if="${param.addnoowner}">
+                        Carta non associata ad alcun proprietario!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="alert alert-dark" th:if="${param.nostore}">
+                Utente non associato ad alcuno store!
+                Richiedere intervento Amministratore di Sistema.
+            </div>
+            <div class="alert alert-danger" th:if="${param.unauthorized}">
+                Negozio non abilitato alle Transazioni!
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

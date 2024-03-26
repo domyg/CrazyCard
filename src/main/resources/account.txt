@@ -1,0 +1,57 @@
+# Account 1)
+-- Questo Utente ha tutti i ruoli al fine di semplificare e velocizzare
+-- le operazioni riunendole tutte in un singolo account.
+
+email: domyg98@gmail.com
+password: password
+password cifrata: $2a$10$tj/o8wJ7bw8uVeFBnVT5EO5fA5RVE/CJubpKgSLO8bbPNZEK7zZj.
+ruoli: ADMIN, MERCHANT, CUSTOMER
+
+
+# Account 2)
+
+email: giulio.verdi@gmail.com
+password: password
+password cifrata: $2a$10$VUkC0LcWeD3JyzBjkUi3QeEQMsiNeexqA4wr11d97b0IIeNnH6SzG
+ruoli: ADMIN
+
+
+# Account 3)
+
+email: alfonso.grigi@gmail.com
+password: password
+password cifrata: $2a$10$rm8x/OwT6p5KF983TpjWWeBe9Va20ClfslmkAsj0XQ2/YcDyqFEk2
+ruoli: MERCHANT
+
+
+# Account 4)
+
+email: ferdinando.arancioni@gmail.com
+password: password
+password cifrata: $2a$10$ZQImDCHZ67BRY.bt2oBMr.A0xmNznT7/rkW4XrXij3/AsP47HWtgi
+ruoli: CUSTOMER
+
+
+# Account 5)
+
+email: simone.bianchi@gmail.com
+password: password
+password cifrata: $2a$10$3Yh1Psxz2GaE57vzMQuACOD2DgZLE0d1UlTO8j.XblI8S8mwJ.Mvm
+ruoli: MERCHANT
+
+
+# Account 6)
+
+email: marco.rossi@gmail.com
+password: password
+password cifrata: $2a$10$AB0/9SAXpckXwq02MdXv3u4jk2SU7cdOOvLoHpuJE4uIdLkiXkFry
+ruoli: CUSTOMER
+
+
+# Account 7)
+
+email: federico.bianchi@gmail.com
+password: password
+password cifrata: $2a$10$a4E23eiLY3GeFvIbdHVMSOlmqJz5X1tRfEpl8dEVyLAMgLj4Re9MC
+ruoli: MERCHANT
+

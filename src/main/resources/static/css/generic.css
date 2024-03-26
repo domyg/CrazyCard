@@ -1,0 +1,27 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button
+{
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input {
+    margin-top: 10px;
+}
+button {
+    margin-top: 10px;
+}
+
+select {
+    margin-top: 10px;
+}
+
+label {
+    margin-top: 10px;
+}
+
+.clickable-th:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    user-select: none;
+}

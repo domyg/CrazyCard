@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>CrazyCard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="../../static/css/generic.css">
+    <script src="../../static/js/admin-analysis.js"></script>
+    <script src="../../static/js/generic.js"></script>
+    <link rel="icon" type="image/ico" th:href="@{../static/favicon.ico}">
+</head>
+<body>
+<nav th:replace="~{fragments/navbar.html:: navbarAnonymous}" sec:authorize="isAnonymous()"></nav>
+<nav th:replace="~{fragments/navbar.html:: navbarAuthenticated}" sec:authorize="isAuthenticated()"></nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card card-header">
+                    Analisi Carte
+                </div>
+                <div class="card card-body">
+                    <form
+                            role="form"
+                            class="form-horizontal center"
+                            method="get"
+                            th:action="@{/admin/analysis/card}">
+                        <div class="form-group">
+                            <button class="btn btn-primary" type="submit">
+                                Visualizza Analitiche Carte
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card card-header">
+                    Visualizza Transazioni Carta
+                </div>
+                <div class="card card body">
+                    <form
+                            role="form"
+                            class="form-horizontal center"
+                            method="get"
+                            th:action="@{/admin/analysis/trans}">
+                        <div class="form-group" style="margin-top: 10px">
+                            <label class="form-label" for="cardNumberSearch">Carta</label>
+                            <input type="number" id="cardNumberSearch" name="cardNumberSearch"
+                                   placeholder="Inserisci Numero Carta" required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                Cerca
+                            </button>
+                        </div>
+                        <div class="alert alert-danger" th:if="${param.error}">
+                            Numero non valido
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card card-header">
+                    Visualizza Transazioni Negozio
+                </div>
+                <div class="card card body">
+                    <form
+                            role="form"
+                            class="form-horizontal center"
+                            method="get"
+                            th:action="@{/admin/analysis/store}">
+                        <div class="form-group" style="margin-top: 10px">
+                            <label class="form-label" for="cardNumberSearch">Negozio</label>
+                            <select id="storeNameSearch" name="storeNameSearch">
+                                <option selected value="null">
+                                    -
+                                </option>
+                                <optgroup label="Negozi">
+                                    <option th:each="store : ${stores}"
+                                            th:value="${store.name}"
+                                            th:text="${store.name}">
+                                    </option>
+                                </optgroup>
+                            </select>
+
+                            <!--
+                            <input type="text" id="storeNameSearch" name="storeNameSearch"
+                                   placeholder="Inserisci Nome Negozio" required>
+                            -->
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                Cerca
+                            </button>
+                        </div>
+                        <div class="alert alert-danger" th:if="${param.errorstore}">
+                            Nome non valido
+                        </div>
+                        <div class="alert alert-dark" th:if="${param.insertstore}">
+                            Seleziona un Negozio dalla Lista
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="alert alert-dark" th:if="${param.nocards}">
+        Nessuna Carta nel Sistema
+    </div>
+    <div class="alert alert-dark" th:if="${param.exists}">
+        La Carta cercata non è presente nel Sistema
+    </div>
+    <div class="alert alert-dark" th:if="${param.notransactionsoncard}">
+        Nessun Acquisto per la Carta selezionata
+    </div>
+    <div class="alert alert-dark" th:if="${param.notransactionstore}">
+        Il Negozio selezionato non ha registrato alcuna Transazione
+    </div>
+
+    <div class="row" id="card-table-div" style="margin-top: 50px" th:if="${showCard}">
+        <div class="col center overflow-auto">
+            <table class="table table-bordered table-hover" id="resultTableCard">
+                <thead class="table-dark">
+                <tr>
+                    <th>Carta</th>
+                    <th>Stato</th>
+                    <th>Proprietario</th>
+                    <th class="clickable-th"
+                        onclick="sortTable(3, 'resultTableCard')">Numero Acquisti</th>
+                    <th class="clickable-th"
+                            onclick="sortTable(4, 'resultTableCard')">Spesa Totale</th>
+                    <th class="clickable-th"
+                            onclick="sortTable(5, 'resultTableCard')">Spesa Media</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="entry : ${cardtransmap}">
+                    <td th:text="${entry.getKey().number}"></td>
+                    <td th:text="${entry.getKey().state}"></td>
+                    <td th:text="${entry.getKey().ownerName}"></td>
+                    <td th:text="${entry.getValue().getValue(0)}"></td>
+                    <td th:text="${entry.getValue().getValue(1)}"></td>
+                    <td th:text="${entry.getValue().getValue(2)}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-primary" onclick="sendData('resultTableCard')"
+                    id="downloadButtonCard">
+                Download
+            </button>
+        </div>
+    </div>
+
+    <div class="row" id="transaction-table-div" style="margin-top: 50px" th:if="${showTrans}">
+        <div class="col center overflow-auto">
+            <table class="table table-bordered table-hover"
+                   id="resultTableTrans">
+                <thead class="table-dark">
+                <tr>
+                    <th class="clickable-th"
+                    onclick="reverseCol(0,'resultTableTrans')">Data</th>
+                    <th class="clickable-th"
+                    onclick="sortTable(1, 'resultTableTrans')">Importo</th>
+                    <th>Carta</th>
+                    <th>Negozio</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each = "transaction : ${transactions}">
+                    <td th:text = "${transaction.date}"></td>
+                    <td th:text = "${transaction.amount}"></td>
+                    <td th:text = "${transaction.cardNumber}"></td>
+                    <td th:text = "${transaction.storeName}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-primary" onclick="sendData('resultTableTrans')"
+                    id="downloadButtonTrans">
+                Download
+            </button>
+        </div>
+    </div>
+
+    <div class="row" id="store-table-div" style="margin-top: 50px" th:if="${showStore}">
+        <div class="col center overflow-auto">
+            <table class="table table-bordered table-hover"
+                   id="resultTableStore">
+                <thead class="table-dark">
+                <tr>
+                    <th class="clickable-th"
+                        onclick="reverseCol(0,'resultTableStore')">Data</th>
+                    <th class="clickable-th"
+                        onclick="sortTable(1, 'resultTableStore')">Importo</th>
+                    <th>Carta</th>
+                    <th>Negozio</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each = "storeTrans : ${transactionStore}">
+                    <td th:text = "${storeTrans.date}"></td>
+                    <td th:text = "${storeTrans.amount}"></td>
+                    <td th:text = "${storeTrans.cardNumber}"></td>
+                    <td th:text = "${storeTrans.storeName}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-primary" onclick="sendData('resultTableStore')"
+                    id="downloadButtonStore">
+                Download
+            </button>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

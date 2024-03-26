@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>CrazyCard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+          crossorigin="anonymous">
+  </script>
+  <link rel="stylesheet" href="../../static/css/generic.css">
+  <script src="../../static/js/admin-management.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      lockSelect();
+    });
+    </script>
+  <link rel="icon" type="image/ico" th:href="@{../static/favicon.ico}">
+</head>
+<body>
+<nav th:replace="~{fragments/navbar.html:: navbarAnonymous}" sec:authorize="isAnonymous()"></nav>
+<nav th:replace="~{fragments/navbar.html:: navbarAuthenticated}" sec:authorize="isAuthenticated()"></nav>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col center" th:if="${rolelist.contains('ROLE_ADMIN')}">
+      <div class="card">
+        <div class="form">
+          <form
+                  method="post"
+                  role="form"
+                  id="admin-update-form">
+            <div class="form-group center">
+              <label class="form-label" for="admin-email">Email</label>
+              <input type="text"
+                     id="admin-email"
+                     class="form-control"
+                     th:value="${user.email}"
+                     disabled>
+            </div>
+            <div class="form-group center">
+              <label class="form-label" for="admin-name">Nome</label>
+              <input type="text"
+                     id="admin-name"
+                     class="form-control"
+                     th:value="${user.name}"
+                     disabled>
+            </div>
+            <div class="form-group center">
+              <label class="form-label" for="admin-role">Ruolo</label>
+              <input type="text"
+                     id="admin-role"
+                     class="form-control"
+                     value="ADMIN"
+                     disabled>
+            </div>
+            <div class="form-group center">
+              <button type="button" class="btn btn-dark"
+                      disabled>
+                Modifica
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col center" th:if="${rolelist.contains('ROLE_CUSTOMER')}">
+      <div class="card">
+        <div class="form">
+          <form
+                  method="post"
+                  role="form"
+                  id="customer-update-form"
+                  th:action="@{/admin/management/update/customer}">
+            <div class="form-group center">
+              <label class="form-label" for="customer-email">Email</label>
+              <input type="text"
+                     class="form-control"
+                     th:value="${user.email}"
+                     name="customerEmail"
+                     id="customer-email"
+                     readonly>
+            </div>
+            <div class="form-group center">
+              <label class="form-label" for="customer-name">Nome</label>
+              <input type="text"
+                     class="form-control"
+                     th:value="${user.name}"
+                     name="customerName"
+                     id="customer-name"
+                     readonly>
+            </div>
+            <div class="form-group center">
+              <label class="form-label" for="customer-role">Ruolo</label>
+              <input type="text"
+                     class="form-control"
+                     value="CLIENTE"
+                     name="customerRole"
+                     id="customer-role"
+                     readonly>
+            </div>
+            <div class="form-group center">
+              <button class="btn btn-secondary" type="button"
+                      onclick="editCustomer()">
+                Modifica
+              </button>
+            </div>
+            <div class="form-group center" id="customer-select-div" style="display: none">
+              <label class="form-label" for="customer-select">
+                Azione
+              </label>
+              <select id="customer-select" name="customerSelect">
+                <option selected value="null">
+                  -
+                </option>
+                <option value="delete">
+                  Elimina Account
+                </option>
+                <option value="disableCard">
+                  Disabilita Carte
+                </option>
+              </select>
+            </div>
+            <div class="form-group center">
+              <button class="btn btn-primary" type="submit"
+                      id="confirm-customer-button"
+                      style="display: none">
+                Conferma
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col center" th:if="${rolelist.contains('ROLE_MERCHANT')}">
+      <div class="card">
+        <div class="form">
+          <form
+                  method="post"
+                  role="form"
+                  id="merchant-update-form"
+                  th:action="@{/admin/management/update/merchant}">
+            <div class="form-group center">
+              <label class="form-label" for="merchant-email">Email</label>
+              <input type="text"
+                     class="form-control"
+                     th:value="${user.email}"
+                     name="merchantEmail"
+                     id="merchant-email"
+                     readonly>
+            </div>
+            <div class="form-group center">
+              <label class="form-label" for="merchant-name">Nome</label>
+              <input type="text"
+                     class="form-control"
+                     th:value="${user.name}"
+                     name="merchantName"
+                     id="merchant-name"
+                     readonly>
+            </div>
+            <div class="form-group center">
+              <label class="form-label" for="merchant-store">Negozio</label>
+              <select id="merchant-store" class="form-control"
+                      name="merchantStore">
+                <option selected th:attr="value=${user.store eq null ? '-' : user.store.name}"
+                                  th:text="${user.store eq null ? '-' : user.store.name}">
+                </option>
+                <optgroup label="Assegna Negozio" disabled id="store-group">
+                  <option th:each="store : ${stores}"
+                          th:value="${store.name}"
+                          th:text="${store.name}">
+                  </option>
+                </optgroup>
+
+              </select>
+              <!--
+
+              Vecchia versione che sfruttava un campo di input testuale piuttosto che una
+              select.
+
+              <input
+                      th:attr="value=${user.store eq null ? '-' : user.store.name}"
+                      type="text"
+                      class="form-control"
+                      name="merchantStore"
+                      id="merchant-store"
+                      readonly>
+              -->
+            </div>
+            <div class="form-group center">
+              <label class="form-label" for="merchant-role">Ruolo</label>
+              <input type="text"
+                     class="form-control"
+                     value="NEGOZIANTE"
+                     name="merchantRole"
+                     id="merchant-role"
+                     readonly>
+            </div>
+            <div class="form-group center">
+              <button class="btn btn-secondary" type="button"
+                      onclick="editMerchant()">
+                Modifica
+              </button>
+            </div>
+            <div class="form-group center" id="merchant-select-div" style="display: none">
+              <label class="form-label" for="customer-select">
+                Azione
+              </label>
+              <select id="merchant-select" name="merchantSelect" onchange="showEditStore()">
+                <option selected value="null">
+                  -
+                </option>
+                <option value="merchantdelete">
+                  Elimina Account
+                </option>
+                <option value="updatestore">
+                  Cambia Negozio
+                </option>
+              </select>
+            </div>
+            <div class="form-group center">
+              <button class="btn btn-primary" type="submit"
+                      id="confirm-merchant-button"
+                      style="display: none">
+                Conferma
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
